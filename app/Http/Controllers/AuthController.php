@@ -77,7 +77,7 @@ class AuthController extends Controller
         $time = Usertiming::where('user_id', $user->id)
             ->where('type',1)
             ->whereNull('finish')
-            ->orderBy('created_at','desc')
+            ->orderByDesc('created_at')
             ->first();
         if ($time != null){
             $time->finish = Carbon::now();

@@ -390,7 +390,7 @@ class WorkerController extends Controller
             $time = Usertiming::where('user_id', $user->id)
                 ->where('type', request('type'))
                 ->whereNull('finish')
-                ->orderBy('created_at', 'desc')
+                ->orderByDesc('created_at')
                 ->first();
             if ($time != null) {
                 $time->finish = Carbon::now();
@@ -428,7 +428,7 @@ class WorkerController extends Controller
                 ->where('type', request('type'))
                 ->whereNull('finish')
                 ->where('order_id', request('order_id'))
-                ->orderBy('created_at', 'desc')
+                ->orderByDesc('created_at')
                 ->first();
             if ($time != null) {
                 $time->finish = Carbon::now();
@@ -453,7 +453,7 @@ class WorkerController extends Controller
         //status 1 start 0 notworking/finish
         //type 0-сбор 1-проверка 2-помощь в сборке 3-помощь в проверке
         $user = Auth::user();
-        $status_last = Orderstatus::where('order_id', request('order_id'))->orderBy('created_at', 'desc')->first();
+        $status_last = Orderstatus::where('order_id', request('order_id'))->orderByDesc('created_at')->first();
 
         if (request('status') == 1) {
             //start
@@ -559,7 +559,7 @@ $status_order = new Orderstatus();
                         ->where('type_order', 2)//помощь
                         ->where('order_id', $helper_user->order_id)
                         ->whereNull('finish')
-                        ->orderBy('created_at', 'desc')
+                        ->orderByDesc('created_at')
                         ->first();
                     if ($helper_time != null) {
                         $helper_time->finish = Carbon::now();
@@ -591,7 +591,7 @@ $status_order = new Orderstatus();
                 ->where('type_order', request('type'))
                 ->where('order_id', $user->order_id)
                 ->whereNull('finish')
-                ->orderBy('created_at', 'desc')
+                ->orderByDesc('created_at')
                 ->first();
             if ($time != null) {
                 $time->finish = Carbon::now();
@@ -643,7 +643,7 @@ $status_order = new Orderstatus();
             $time = Usertiming::where('user_id', $user->id)
                 ->where('type', 10)
                 ->whereNull('finish')
-                ->orderBy('created_at', 'desc')
+                ->orderByDesc('created_at')
                 ->first();
             if ($time != null) {
                 $time->finish = Carbon::now();
@@ -693,7 +693,7 @@ $status_order = new Orderstatus();
             $time = Usertiming::where('user_id', $user->id)
                 ->where('type', 30)
                 ->whereNull('finish')
-                ->orderBy('created_at', 'desc')
+                ->orderByDesc('created_at')
                 ->first();
             if ($time != null) {
                 $time->finish = Carbon::now();
@@ -764,7 +764,7 @@ $status_order = new Orderstatus();
             $time = Usertiming::where('user_id', $user->id)
                 ->where('type', 20)
                 ->whereNull('finish')
-                ->orderBy('created_at', 'desc')
+                ->orderByDesc('created_at')
                 ->first();
             if ($time != null) {
                 $time->finish = Carbon::now();

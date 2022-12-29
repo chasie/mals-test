@@ -36,7 +36,7 @@ class Order extends Model
     }
     public function orderstatus()
     {
-        return $this->hasOne(Orderstatus::class)->orderBy('created_at','desc');
+        return $this->hasOne(Orderstatus::class)->orderByDesc('created_at');
     }
 
     public function compleatedstatuses()
@@ -57,19 +57,19 @@ class Order extends Model
     {
         return $this->hasOne(Usertiming::class, 'order_id', 'id')
             ->where('type_order', '0')
-            ->orderBy('created_at', 'desc');
+            ->orderByDesc('created_at');
     }
         public function checkstatistic()
     {
         return $this->hasOne(Usertiming::class, 'order_id', 'id')
             ->where('type_order', '1')
-            ->orderBy('created_at','desc');
+            ->orderByDesc('created_at');
     }
     public function helpstatistic()
     {
         return $this->hasOne(Usertiming::class, 'order_id', 'id')
             ->where('type_order', '2')
-            ->orderBy('created_at','desc');
+            ->orderByDesc('created_at');
     }
 
 }
