@@ -33,7 +33,7 @@ class AuthController extends Controller
      */
     public function getLogin()
     {
-        return view('auth.login', array('title' => 'Login'));
+        return view('auth.login', ['title' => 'Login']);
     }
 
     /**
@@ -43,24 +43,24 @@ class AuthController extends Controller
     {
         $password = request()->get('password');
 
-        if (Auth::attempt(array('login' => $password,'password' => $password))) {
+        if (Auth::attempt(['login' => $password,'password' => $password])) {
 
             // Проверить активирован или нет
             if (Auth::user()->activation == 1) {
-                return Response::json(array('success' => "true"), 200);
+                return Response::json(['success' => "true"], 200);
             } else {
                 Auth::logout();
-                return Response::json(array('success' => "false", 'error' => 'Доступ к CRM ограничен.'), 200);
+                return Response::json(['success' => "false", 'error' => 'Доступ к CRM ограничен.'], 200);
             }
-        } elseif (Auth::attempt(array('login' => $password,'password' => $password))) {
+        } elseif (Auth::attempt(['login' => $password,'password' => $password])) {
             if (Auth::user()->activation == 1) {
-                return Response::json(array('success' => "true"), 200);
+                return Response::json(['success' => "true"], 200);
             } else {
                 Auth::logout();
-                return Response::json(array('success' => "false", 'error' => 'Доступ к CRM ограничен.'), 200);
+                return Response::json(['success' => "false", 'error' => 'Доступ к CRM ограничен.'], 200);
             }
         } else {
-            return Response::json(array('success' => "false", 'error' => 'Не верный пин-код!'), 200);
+            return Response::json(['success' => "false", 'error' => 'Не верный пин-код!'], 200);
         }
     }
 

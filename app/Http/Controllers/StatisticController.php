@@ -644,13 +644,13 @@ class StatisticController extends Controller
             }
         }
 
-        return view('admin.statistics.init_table', array('title' => 'статистика',
+        return view('admin.statistics.init_table', ['title' => 'статистика',
             'data' =>  $data,
             "data_totals" => $data_totals,
             "columns" => $columns,
             "recordsTotal"=>$recordsTotal,
             "recordsFiltered"=>$recordsFiltered,
-        ));
+        ]);
     }
 
     public static function getTimeFromseconds($seconds)
@@ -661,12 +661,12 @@ class StatisticController extends Controller
     public function getDayStatistics()
     {
         if (!Auth::user()->isSAdmin() && !Auth::user()->isAdmin() && !Auth::user()->isManager()) {
-            return Response::json(array('success' => "false", "error" => 'access only admin group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only admin group'], 200);
         }
         $users = User::where('activation',1)->where('group_id','>',1)->orderBy('name')->get();
-        return view('admin.statistics.day_statistic', array('title' => 'Дневная статистика',
+        return view('admin.statistics.day_statistic', ['title' => 'Дневная статистика',
             'users'=>$users,
-        ));
+        ]);
     }
     public function getJsonDayStatistics()
     {
@@ -897,11 +897,11 @@ class StatisticController extends Controller
             });
         }
 
-        return Response::json(array('data' =>  $data,
+        return Response::json(['data' =>  $data,
             "draw" => intval($draw),
             "recordsTotal"=>$recordsTotal,
             "recordsFiltered"=>$recordsFiltered,
-        ), 200);
+        ], 200);
     }
 
     /**
@@ -911,12 +911,12 @@ class StatisticController extends Controller
     public function getOrderStatistics()
     {
         if (!Auth::user()->isSAdmin() && !Auth::user()->isAdmin() && !Auth::user()->isManager()) {
-            return Response::json(array('success' => "false", "error" => 'access only admin group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only admin group'], 200);
         }
 
-        return view('admin.statistics.order_statistics', array('title' => 'Заказы статистика',
+        return view('admin.statistics.order_statistics', ['title' => 'Заказы статистика',
 
-        ));
+        ]);
     }
 
     public function getJsonOrderStatistics()
@@ -1112,20 +1112,20 @@ class StatisticController extends Controller
             });
         }
 
-        return Response::json(array('data' =>  $data,
+        return Response::json(['data' =>  $data,
             "draw" => intval($draw),
             "recordsTotal"=>$recordsTotal,
             "recordsFiltered"=>$recordsFiltered,
-        ), 200);
+        ], 200);
     }
 
     public function getRealTimeStatistics()
     {
         if (!Auth::user()->isSAdmin() && !Auth::user()->isAdmin() && !Auth::user()->isManager()) {
-            return Response::json(array('success' => "false", "error" => 'access only admin group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only admin group'], 200);
         }
-        return view('admin.statistics.realtime_statistics', array('title' => 'Real Time',
-        ));
+        return view('admin.statistics.realtime_statistics', ['title' => 'Real Time',
+        ]);
 
     }
 
@@ -1208,11 +1208,11 @@ class StatisticController extends Controller
             'Проверено заказов: ',$order_checked_cnt,'На сумму: ',$order_checked_price
         ];
 
-        return Response::json(array('data' =>  $data,
+        return Response::json(['data' =>  $data,
             "draw" => intval($draw),
             "recordsTotal"=>$recordsTotal,
             "recordsFiltered"=>$recordsFiltered,
-        ), 200);
+        ], 200);
     }
 
 
@@ -1360,11 +1360,11 @@ class StatisticController extends Controller
             }
             $data[] = $temp_arr;
         }
-        return Response::json(array('data' =>  $data,
+        return Response::json(['data' =>  $data,
             "draw" => intval($draw),
             "recordsTotal"=>$recordsTotal,
             "recordsFiltered"=>$recordsFiltered,
-        ), 200);
+        ], 200);
     }
 
     /**
@@ -1373,11 +1373,11 @@ class StatisticController extends Controller
     public function postDeleteCheckOrder()
     {
         if (!Auth::user()->isSAdmin() && !Auth::user()->isAdmin()) {
-            return Response::json(array('success' => "false", "error" => 'access only admin group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only admin group'], 200);
         }
         $order = Order::find(request('order_id'));
         if ($order == null){
-            return Response::json(array('success' => "false", "error" => 'not found'), 200);
+            return Response::json(['success' => "false", "error" => 'not found'], 200);
         }
         //order type
 //0 сбор заказа
@@ -1387,10 +1387,10 @@ class StatisticController extends Controller
             ->where('type_order', 1)
             ->first();
         if ($statistics == null) {
-            return Response::json(array('success' => "false", "error" => 'Проверка еще не выполнена'), 200);
+            return Response::json(['success' => "false", "error" => 'Проверка еще не выполнена'], 200);
         }
         if ($statistics->finish == null) {
-            return Response::json(array('success' => "false", "error" => 'Нужно завершить проверку, что бы удалить'), 200);
+            return Response::json(['success' => "false", "error" => 'Нужно завершить проверку, что бы удалить'], 200);
         }
         $statistics->delete();
         //2021.12.11 Пул тасков от 2021.12.07 удяляю паузы проверки
@@ -1402,16 +1402,16 @@ class StatisticController extends Controller
 //3 проверен
         Orderstatus::where('order_id', $order->id)->whereIn('status',[2,3])->delete();
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
     public function postDeleteCompleteOrder()
     {
         if (!Auth::user()->isSAdmin() && !Auth::user()->isAdmin()) {
-            return Response::json(array('success' => "false", "error" => 'access only admin group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only admin group'], 200);
         }
         $order = Order::find(request('order_id'));
         if ($order == null){
-            return Response::json(array('success' => "false", "error" => 'not found'), 200);
+            return Response::json(['success' => "false", "error" => 'not found'], 200);
         }
         //order type
 //0 сбор заказа
@@ -1421,13 +1421,13 @@ class StatisticController extends Controller
             ->where('type_order', 0)
             ->first();
         if ($statistics == null) {
-            return Response::json(array('success' => "false", "error" => 'Сборка еще не выполнена'), 200);
+            return Response::json(['success' => "false", "error" => 'Сборка еще не выполнена'], 200);
         }
         if ($statistics->finish == null) {
-            return Response::json(array('success' => "false", "error" => 'Нужно завершить сборку, что бы удалить'), 200);
+            return Response::json(['success' => "false", "error" => 'Нужно завершить сборку, что бы удалить'], 200);
         }
         if (Usertiming::where('order_id', $order->id)->whereNull('finish')->count()) {
-            return Response::json(array('success' => "false", "error" => 'Нужно завершить работу по заказу, что бы удалить'), 200);
+            return Response::json(['success' => "false", "error" => 'Нужно завершить работу по заказу, что бы удалить'], 200);
         }
 
         //order status
@@ -1438,13 +1438,13 @@ class StatisticController extends Controller
         Usertiming::where('order_id', $order->id)->delete();
         Orderstatus::where('order_id', $order->id)->delete();
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
     public function postModalStatisticsUserInfo()
     {
         if (!Auth::user()->isSAdmin() && !Auth::user()->isAdmin() && !Auth::user()->isManager()) {
-            return Response::json(array('success' => "false", "error" => 'access only admin group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only admin group'], 200);
         }
         $date = Carbon::createFromFormat('d.m.Y',request('date'));
                 $usertimings = Usertiming::where('user_id', request('user_id'))->where('created_at','>=', $date->copy()->startOfDay())
@@ -1529,10 +1529,10 @@ class StatisticController extends Controller
         if ($end_of_day != null){
             $timing_arr[] = $end_of_day;
         }
-        return view('admin.statistics.modal_user_info', array('title' => 'User Info',
+        return view('admin.statistics.modal_user_info', ['title' => 'User Info',
             'user' => $user,
             'timing_arr' => $timing_arr,
 
-        ));
+        ]);
     }
 }
