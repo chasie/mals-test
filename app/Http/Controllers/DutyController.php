@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Duty;
+use App\Models\Duty;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 
 class DutyController extends Controller
 {
@@ -24,10 +28,15 @@ class DutyController extends Controller
         return $branch;
     }
 
-    public function index()
+    public function index(): Factory|JsonResponse|View|Application
     {
-        if (! auth()->user()->isSAdmin() && ! auth()->user()->isAdmin() && ! auth()->user()->isManager()) {
-            return response()->json(['success' => 'false', 'error' => 'access only admin group']);
+        if (auth()->user()->isRole()) {
+            return response()->json(
+                [
+                    'success' => 'false',
+                    'error' => 'access only admin group'
+                ]
+            );
         }
         $duties = Duty::all()->toArray();
         $duties = $this->buildTree($duties);
@@ -39,7 +48,7 @@ class DutyController extends Controller
             ]);
     }
 
-    public function add()
+    public function add(): Factory|View|Application
     {
         return view(
             'admin.duties.modal',
@@ -50,10 +59,9 @@ class DutyController extends Controller
         );
     }
 
-    public function edit()
+    public function edit(): Factory|JsonResponse|View|Application
     {
-        $id = request('id');
-        $duty = Duty::find($id);
+        $duty = Duty::find(request('id'));
         if ($duty == null) {
             return response()->json([
                 'success' => 'false',

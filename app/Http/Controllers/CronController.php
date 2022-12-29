@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Orderstatus;
-use App\Models\UserTiming;
+use App\Models\Usertiming;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
