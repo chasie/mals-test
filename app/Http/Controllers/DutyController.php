@@ -3,31 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Duty;
-use App\Finance;
-use App\History;
-use App\Portfel;
-use App\Portfelfixstockamount;
-use App\Portfeltemp;
-use App\Scoring;
-use App\Stock;
-use App\Tarif;
-use App\Ticket;
-use App\Tickettext;
-use App\User;
-use App\Userstatus;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 
 class DutyController extends Controller
 {
-    private function buildTree(array &$elements, $parentId = 0){
+    private function buildTree(array &$elements, $parentId = 0)
+    {
         $branch = [];
 
         foreach ($elements as $element) {
@@ -40,21 +20,22 @@ class DutyController extends Controller
 //                unset($elements[$element['id']]);
             }
         }
+
         return $branch;
     }
 
     public function index()
     {
-        if (!auth()->user()->isSAdmin() && !auth()->user()->isAdmin() && !auth()->user()->isManager()) {
-            return response()->json(['success' => "false", "error" => 'access only admin group']);
+        if (! auth()->user()->isSAdmin() && ! auth()->user()->isAdmin() && ! auth()->user()->isManager()) {
+            return response()->json(['success' => 'false', 'error' => 'access only admin group']);
         }
         $duties = Duty::all()->toArray();
         $duties = $this->buildTree($duties);
 
         return view('admin.duties.index',
             [
-                'title'     => 'Рабочие обязанности',
-                'duties'    => $duties
+                'title' => 'Рабочие обязанности',
+                'duties' => $duties,
             ]);
     }
 
@@ -63,8 +44,8 @@ class DutyController extends Controller
         return view(
             'admin.duties.modal',
             [
-                'title'     => 'Добавить обязанность',
-                'parent_id' => request('parent_id')
+                'title' => 'Добавить обязанность',
+                'parent_id' => request('parent_id'),
             ]
         );
     }
@@ -76,9 +57,10 @@ class DutyController extends Controller
         if ($duty == null) {
             return response()->json([
                 'success' => 'false',
-                'error' => 'not found'
+                'error' => 'not found',
             ]);
         }
+
         return view('admin.duties.modal', [
             'title' => 'Редактирование обязанность',
             'duty' => $duty,
@@ -88,12 +70,12 @@ class DutyController extends Controller
 
     public function store()
     {
-        if (request()->has('id') && request('id') != ''){
+        if (request()->has('id') && request('id') != '') {
             $duty = Duty::find(request('id'));
             if ($duty == null) {
                 return response()->json([
                     'success' => 'false',
-                    'error' => 'not found'
+                    'error' => 'not found',
                 ]);
             }
         } else {
@@ -105,10 +87,10 @@ class DutyController extends Controller
             'name',
         ];
         foreach ($validate_arr as $item) {
-            if (!request()->has($item) || request($item) == '') {
+            if (! request()->has($item) || request($item) == '') {
                 return response()->json([
                     'success' => 'false',
-                    'error' => 'Заполните необходимые поля'
+                    'error' => 'Заполните необходимые поля',
                 ]);
             }
         }
@@ -117,7 +99,7 @@ class DutyController extends Controller
         $duty->save();
 
         return response()->json([
-            'success' => 'true'
+            'success' => 'true',
         ]);
     }
 
@@ -127,17 +109,17 @@ class DutyController extends Controller
         if ($duty == null) {
             return response()->json([
                 'success' => 'false',
-                'error' => 'not found'
+                'error' => 'not found',
             ]);
         }
 
         function DeleteRecursive($parent_id)
         {
             $duties = Duty::where('parent_id', $parent_id)->get();
-            if (count($duties)==0) {
+            if (count($duties) == 0) {
                 return;
             }
-            foreach ($duties as $d){
+            foreach ($duties as $d) {
                 $new_parent = $d->id;
                 $d->delete();
                 DeleteRecursive($new_parent);
@@ -148,5 +130,4 @@ class DutyController extends Controller
 
         return response()->json(['success' => 'true']);
     }
-
 }

@@ -2,71 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use App\Abonnement;
-use App\Clientabonnement;
 use App\Orderstatus;
-use App\Popularstyle;
-use App\Room;
-use App\Tablesetting;
-use App\Timeschedule;
-use App\Typepractice;
-use App\User;
 use App\Usertiming;
-use App\Visit;
-use App\Yogaclass;
-use App\Yogaclassabonnement;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\URL;
 
 class CronController extends Controller
 {
     public function сloseendofday()
     {
 //        Log::info('сloseendofday');
-        $usertimings = Usertiming::where('created_at','<',Carbon::now()->startOfDay())
+        $usertimings = Usertiming::where('created_at', '<', Carbon::now()->startOfDay())
             ->whereNull('finish')
             ->with('user')
             ->orderBy('created_at')
             ->get();
         //order type
-//0 сбор заказа
-//1 проверка
-//2 помощь
+        //0 сбор заказа
+        //1 проверка
+        //2 помощь
         //order status
-//0 сбор заказа
-//1 собран
-//2 проверка
-//3 проверен
+        //0 сбор заказа
+        //1 собран
+        //2 проверка
+        //3 проверен
         $orderstatuses = [];
-        if  (count($usertimings)){
-            foreach ($usertimings as $timing){
+        if (count($usertimings)) {
+            foreach ($usertimings as $timing) {
                 $timing->finish = Carbon::now()->startOfDay()->subSecond();
                 $timing->diff = $timing->finish->diffInSeconds(Carbon::parse($timing->start));
                 $timing->save();
-//сборка
-                if ($timing->type_order === 0){
-                    $orderstatuses[]=
-                        ['order_id'=>$timing->order_id,
-                            'status'=>1,
-                            'user_id'=>$timing->user_id,
-                            'created_at'=>Carbon::now(),
-                            'updated_at'=>Carbon::now(),
-                            ];
-
+                //сборка
+                if ($timing->type_order === 0) {
+                    $orderstatuses[] =
+                        ['order_id' => $timing->order_id,
+                            'status' => 1,
+                            'user_id' => $timing->user_id,
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ];
                 }
                 //проверка
-                if ($timing->type_order === 1){
-                    $orderstatuses[]=
-                        ['order_id'=>$timing->order_id,
-                            'status'=>3,
-                            'user_id'=>$timing->user_id,
-                            'created_at'=>Carbon::now(),
-                            'updated_at'=>Carbon::now(),
+                if ($timing->type_order === 1) {
+                    $orderstatuses[] =
+                        ['order_id' => $timing->order_id,
+                            'status' => 3,
+                            'user_id' => $timing->user_id,
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
                         ];
                 }
 
@@ -80,9 +63,10 @@ class CronController extends Controller
                 $timing->user->save();
             }
         }
-        if (count($orderstatuses)){
+        if (count($orderstatuses)) {
             Orderstatus::insert($orderstatuses);
         }
+
         return 0;
     }
 }
