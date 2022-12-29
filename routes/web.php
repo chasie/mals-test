@@ -30,9 +30,9 @@ Route::get('logout', "AuthController@getLogout");
 Route::group(['prefix' => 'admin'], function () {
     Route::get('', ['as' => 'admin', function () {
         if (Auth::check()) {
-            return redirect()->route('admin.users');// админка
+            return to_route('admin.users');// админка
         } else {
-            return redirect()->route('admin.loginform');// форма логина с роутами для админки
+            return to_route('admin.loginform');// форма логина с роутами для админки
         }
     }]);
     Route::get('login', "AuthController@getAdminLogin")->name('admin.loginform');
@@ -83,7 +83,7 @@ Route::get('login', "AuthController@getLogin")->name('login');
 Route::post('login', "AuthController@postLogin");
 Route::get('logout', "AuthController@getLogout")->name('logout');
 Route::get('/', function () {
-   return redirect()->route('main');
+   return to_route('main');
 })->middleware('auth');
 Route::get('start', "WorkerController@start")->middleware('auth')->name('start');
 Route::get('break', "WorkerController@break")->middleware('auth')->name('break');

@@ -101,10 +101,10 @@ class WorkerController extends Controller
         }
         $user = Auth::user();
         if ($user->status_work != 1) {
-            return redirect()->route('start');
+            return to_route('start');
         } else {
             if ($user->order_id != null || $user->isdelivery != 0 || $user->duty_id != null || $user->ismanagertask != 0) {
-                return redirect()->route('action');
+                return to_route('action');
             } else {
                 return view('main', ['title' => 'Продуктивного дня, ' . $user->name . '!', 'user' => $user]);
             }
