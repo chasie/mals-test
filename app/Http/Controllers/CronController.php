@@ -4,24 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Abonnement;
 use App\Clientabonnement;
-use App\Orderstatus;
+use App\Models\Orderstatus;
+use App\Models\Usertiming;
 use App\Popularstyle;
 use App\Room;
 use App\Tablesetting;
 use App\Timeschedule;
 use App\Typepractice;
-use App\User;
-use App\Usertiming;
 use App\Visit;
 use App\Yogaclass;
 use App\Yogaclassabonnement;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\URL;
 
 class CronController extends Controller
 {

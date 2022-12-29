@@ -1,9 +1,5 @@
 <?php
 
-use App\Http\Controllers\DutyController;
-use App\Orderstatus;
-use App\Usertiming;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 /*

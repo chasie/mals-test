@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Duty;
-use App\Order;
-use App\Orderstatus;
-
-use App\User;
-use App\Usertiming;
+use App\Models\Duty;
+use App\Models\Order;
+use App\Models\Orderstatus;
+use App\Models\User;
+use App\Models\Usertiming;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;

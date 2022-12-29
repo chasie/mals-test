@@ -3,88 +3,76 @@
 namespace App\Http\Controllers;
 
 use App\Company;
+use App\Http\Requests\Users\LoginRequest;
+use App\Models\Usertiming;
+use App\Partner;
 use App\Passwordreset;
 use App\Portfel;
 use App\RefferalLinks;
-use App\User;
-use App\Partner;
-use App\Usertiming;
+use App\Services\AuthService;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    public static function quickRandom($length = 5)
-    {
-        $n = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        return substr(str_shuffle(str_repeat($n, 5)), 0, $length);
-    }
+    public function __construct(
+        private readonly AuthService $authService
+    )
+    {}
 
     /**
      * Отображение страницы авторизации
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function getLogin()
+    public function login(): View
     {
-        return view('auth.login', ['title' => 'Login']);
+        return view('auth.login', [
+            'title' => 'Login'
+        ]);
     }
 
     /**
      * Авторизация юзера пост запрос, делает проверку
      */
-    public function postLogin()
+    public function attempt(LoginRequest $request): JsonResponse
     {
-        $password = request()->get('password');
-
-        if (Auth::attempt(['login' => $password,'password' => $password])) {
-
-            // Проверить активирован или нет
-            if (Auth::user()->activation == 1) {
-                return Response::json(['success' => "true"], 200);
-            } else {
-                Auth::logout();
-                return Response::json(['success' => "false", 'error' => 'Доступ к CRM ограничен.'], 200);
-            }
-        } elseif (Auth::attempt(['login' => $password,'password' => $password])) {
-            if (Auth::user()->activation == 1) {
-                return Response::json(['success' => "true"], 200);
-            } else {
-                Auth::logout();
-                return Response::json(['success' => "false", 'error' => 'Доступ к CRM ограничен.'], 200);
-            }
-        } else {
-            return Response::json(['success' => "false", 'error' => 'Не верный пин-код!'], 200);
+        try {
+            $this->authService->login(
+                login: $request->get('password'),
+                password: $request->get('password'),
+            );
+            return Response::json([
+                'success'   => 'true',
+            ]);
+        } catch (\Exception $e) {
+            return Response::json([
+                'success'   => 'false',
+                'error'     => $e->getMessage(),
+            ]);
         }
     }
 
     /**
-     * выход
-     * @return \Illuminate\Http\RedirectResponse
+     * Выход пользователя из аккаунта
+     * @return RedirectResponse
      */
-    public function getLogout()
+    public function logout(): RedirectResponse
     {
-        $user = Auth::user();
-        $user->status_work = 0;
-        $user->save();
-
-        $time = Usertiming::where('user_id', $user->id)
-            ->where('type',1)
-            ->whereNull('finish')
-            ->orderBy('created_at','desc')
-            ->first();
-        if ($time != null){
-            $time->finish = Carbon::now();
-            $time->diff = Carbon::now()->diffInSeconds(Carbon::parse($time->start));
-            $time->save();
-        }
-        Auth::logout();
+        $this->authService->logout();
         return Redirect::to(URL::to('/login'));
+    }
+
+
+    public static function quickRandom($length = 5)
+    {
+        $n = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        return substr(str_shuffle(str_repeat($n, 5)), 0, $length);
     }
 }
