@@ -46,7 +46,7 @@ class DutyController extends Controller
     public function index()
     {
         if (!auth()->user()->isSAdmin() && !auth()->user()->isAdmin() && !auth()->user()->isManager()) {
-            return Response::json(['success' => "false", "error" => 'access only admin group']);
+            return response()->json(['success' => "false", "error" => 'access only admin group']);
         }
         $duties = Duty::all()->toArray();
         $duties = $this->buildTree($duties);
@@ -74,7 +74,7 @@ class DutyController extends Controller
         $id = request('id');
         $duty = Duty::find($id);
         if ($duty == null) {
-            return Response::json([
+            return response()->json([
                 'success' => 'false',
                 'error' => 'not found'
             ]);
@@ -91,7 +91,7 @@ class DutyController extends Controller
         if (request()->has('id') && request('id') != ''){
             $duty = Duty::find(request('id'));
             if ($duty == null) {
-                return Response::json([
+                return response()->json([
                     'success' => 'false',
                     'error' => 'not found'
                 ]);
@@ -106,7 +106,7 @@ class DutyController extends Controller
         ];
         foreach ($validate_arr as $item) {
             if (!request()->has($item) || request($item) == '') {
-                return Response::json([
+                return response()->json([
                     'success' => 'false',
                     'error' => 'Заполните необходимые поля'
                 ]);
@@ -116,7 +116,7 @@ class DutyController extends Controller
         $duty->name = request('name');
         $duty->save();
 
-        return Response::json([
+        return response()->json([
             'success' => 'true'
         ]);
     }
@@ -125,7 +125,7 @@ class DutyController extends Controller
     {
         $duty = Duty::find($id);
         if ($duty == null) {
-            return Response::json([
+            return response()->json([
                 'success' => 'false',
                 'error' => 'not found'
             ]);
@@ -146,7 +146,7 @@ class DutyController extends Controller
         DeleteRecursive($duty->id);
         $duty->delete();
 
-        return Response::json(['success' => 'true']);
+        return response()->json(['success' => 'true']);
     }
 
 }

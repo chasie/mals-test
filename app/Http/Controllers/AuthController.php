@@ -47,20 +47,20 @@ class AuthController extends Controller
 
             // Проверить активирован или нет
             if (Auth::user()->activation == 1) {
-                return Response::json(['success' => "true"], 200);
+                return response()->json(['success' => "true"], 200);
             } else {
                 Auth::logout();
-                return Response::json(['success' => "false", 'error' => 'Доступ к CRM ограничен.'], 200);
+                return response()->json(['success' => "false", 'error' => 'Доступ к CRM ограничен.'], 200);
             }
         } elseif (Auth::attempt(['login' => $password,'password' => $password])) {
             if (Auth::user()->activation == 1) {
-                return Response::json(['success' => "true"], 200);
+                return response()->json(['success' => "true"], 200);
             } else {
                 Auth::logout();
-                return Response::json(['success' => "false", 'error' => 'Доступ к CRM ограничен.'], 200);
+                return response()->json(['success' => "false", 'error' => 'Доступ к CRM ограничен.'], 200);
             }
         } else {
-            return Response::json(['success' => "false", 'error' => 'Не верный пин-код!'], 200);
+            return response()->json(['success' => "false", 'error' => 'Не верный пин-код!'], 200);
         }
     }
 
@@ -85,6 +85,6 @@ class AuthController extends Controller
             $time->save();
         }
         Auth::logout();
-        return Redirect::to(URL::to('/login'));
+        return redirect(URL::to('/login'));
     }
 }
