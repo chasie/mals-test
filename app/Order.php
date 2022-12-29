@@ -5,7 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $table = "orders";
 
     public function duties(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
