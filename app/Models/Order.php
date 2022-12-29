@@ -1,76 +1,78 @@
 <?php
-namespace App\Models;
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $table = "orders";
-
     public function duties(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Ordeduty::class,'order_id');
+        return $this->hasMany(Ordeduty::class, 'order_id');
     }
 
     public function created_user()
     {
-        return $this->belongsTo(User::class,'created_user_id','id');
+        return $this->belongsTo(User::class, 'created_user_id', 'id');
     }
-
 
     public function isgetheruser()
     {
-        return $this->hasOne(User::class,'order_id','id')->where('type_order',0);
+        return $this->hasOne(User::class, 'order_id', 'id')->where('type_order', 0);
     }
 
     public function ischeckuser()
     {
-        return $this->hasOne(User::class,'order_id','id')->where('type_order',1);
+        return $this->hasOne(User::class, 'order_id', 'id')->where('type_order', 1);
     }
+
     public function ishelpusers()
     {
-        return $this->hasMany(User::class,'order_id','id')->where('type_order',2);
+        return $this->hasMany(User::class, 'order_id', 'id')->where('type_order', 2);
     }
+
     public function ishelpuser()
     {
-        return $this->hasOne(User::class,'order_id','id')->where('type_order',2);
+        return $this->hasOne(User::class, 'order_id', 'id')->where('type_order', 2);
     }
+
     public function orderstatus()
     {
-        return $this->hasOne(Orderstatus::class)->orderBy('created_at','desc');
+        return $this->hasOne(Orderstatus::class)->orderByDesc('created_at');
     }
 
     public function compleatedstatuses()
     {
-        return $this->hasMany(Orderstatus::class,'order_id','id')->where('status',1);
+        return $this->hasMany(Orderstatus::class, 'order_id', 'id')->where('status', 1);
     }
 
     public function checkedstatuses()
     {
-        return $this->hasMany(Orderstatus::class,'order_id','id')->where('status',3);
+        return $this->hasMany(Orderstatus::class, 'order_id', 'id')->where('status', 3);
     }
 
     //order type
-//0 сбор заказа
-//1 проверка
-//2 помощь
+    //0 сбор заказа
+    //1 проверка
+    //2 помощь
     public function getherstatistic()
     {
         return $this->hasOne(Usertiming::class, 'order_id', 'id')
             ->where('type_order', '0')
-            ->orderBy('created_at', 'desc');
+            ->orderByDesc('created_at');
     }
-        public function checkstatistic()
+
+    public function checkstatistic()
     {
         return $this->hasOne(Usertiming::class, 'order_id', 'id')
             ->where('type_order', '1')
-            ->orderBy('created_at','desc');
+            ->orderByDesc('created_at');
     }
+
     public function helpstatistic()
     {
         return $this->hasOne(Usertiming::class, 'order_id', 'id')
             ->where('type_order', '2')
-            ->orderBy('created_at','desc');
+            ->orderByDesc('created_at');
     }
-
 }

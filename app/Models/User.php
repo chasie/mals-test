@@ -44,7 +44,7 @@ class User extends Authenticatable
 
     public function usertimings()
     {
-        return $this->hasMany(Usertiming::class,'user_id');
+        return $this->hasMany(Usertiming::class, 'user_id');
     }
 
     public function order()
@@ -63,6 +63,7 @@ class User extends Authenticatable
         if ($this->name != null) {
             $text = $this->name;
         }
+
         return $text;
     }
 
@@ -70,9 +71,9 @@ class User extends Authenticatable
     {
         if ($this->group_id == 1) {
             return 'Системный администратор';
-        }elseif ($this->group_id == 3) {
+        } elseif ($this->group_id == 3) {
             return 'Администратор';
-        }elseif ($this->group_id == 4) {
+        } elseif ($this->group_id == 4) {
             return 'Менеджер';
         } else {
             return 'Сотрудник';
@@ -91,6 +92,7 @@ class User extends Authenticatable
             return false;
         }
     }
+
     public function isAdmin()
     {
         if (Auth::check()) {
@@ -103,6 +105,7 @@ class User extends Authenticatable
             return false;
         }
     }
+
     public function isWorker()
     {
         if (Auth::check()) {
@@ -115,6 +118,7 @@ class User extends Authenticatable
             return false;
         }
     }
+
     public function isManager()
     {
         if (Auth::check()) {
@@ -131,32 +135,36 @@ class User extends Authenticatable
     public function getEmail()
     {
         $email = '';
-        if ($this->email!= null){
+        if ($this->email != null) {
             $email = $this->email;
         }
+
         return $email;
     }
 
     public function isWorking()
     {
-        if ($this->status_work == 0){
+        if ($this->status_work == 0) {
             return false;
         }
+
         return true;
     }
+
     //заказ на паузе
     public function isOrderPaused()
     {
         if (Usertiming::where('user_id', $this->id)
-            ->whereIn('type', [40,41,42])//пауза по заказу
+            ->whereIn('type', [40, 41, 42])//пауза по заказу
             ->whereNull('finish')
-            ->count() > 0){
+            ->count() > 0) {
             return true;
         }
+
         return false;
     }
 
-//   work statuses
+    //   work statuses
 //0 не наработе
 //1 старт работі
 //2 перрів
@@ -181,5 +189,4 @@ class User extends Authenticatable
 
 //duty_id
 //если не null То работает над обязанностью
-
 }

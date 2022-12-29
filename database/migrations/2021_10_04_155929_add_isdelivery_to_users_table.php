@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddIsdeliveryToUsersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -16,7 +16,6 @@ class AddIsdeliveryToUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->integer('isdelivery')->nullable()->default(0);
             $table->integer('duty_id')->nullable();
-
         });
     }
 
@@ -32,4 +31,4 @@ class AddIsdeliveryToUsersTable extends Migration
             $table->dropColumn('duty_id');
         });
     }
-}
+};
