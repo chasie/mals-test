@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('orders', function (Blueprint $table) {
-            $table->id();
-            $table->string('number')->nullable();
-            $table->integer('price')->nullable();
-            $table->text('comment')->nullable();
-            $table->timestamps();
+        Schema::table('{{ table }}', function (Blueprint $table) {
+            //
         });
     }
 
@@ -29,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orders');
+        Schema::table('{{ table }}', function (Blueprint $table) {
+            //
+        });
     }
 };
