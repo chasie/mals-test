@@ -31,11 +31,11 @@ class UserController extends Controller
     public function index()
     {
         if (!Auth::user()->isSAdmin() && !Auth::user()->isAdmin() && !Auth::user()->isManager()) {
-            return Response::json(array('success' => "false", "error" => 'access only admin group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only admin group'], 200);
         }
 
-        return view('admin.users.index', array('title' => 'Пользователи',
-            ));
+        return view('admin.users.index', ['title' => 'Пользователи',
+            ]);
     }
 
     public function getJson()
@@ -105,11 +105,11 @@ class UserController extends Controller
 
 
 
-        return Response::json(array('data' =>  $data,
+        return Response::json(['data' =>  $data,
             "draw" => intval($draw),
             "recordsTotal"=>$recordsTotal,
             "recordsFiltered"=>$recordsFiltered,
-        ), 200);
+        ], 200);
     }
 
 
@@ -118,38 +118,38 @@ class UserController extends Controller
         $id =request('id');
         $user = User::find($id);
         if ($user == null) {
-            return Response::json(array('success' => "false", "error" => 'not found'), 200);
+            return Response::json(['success' => "false", "error" => 'not found'], 200);
         }
-        return view('admin.users.modal', array('title' => 'Редактирование пользователя',
+        return view('admin.users.modal', ['title' => 'Редактирование пользователя',
             'user' => $user,
-        ));
+        ]);
     }
     public function editpin()
     {
         $id =request('id');
         $user = User::find($id);
         if ($user == null) {
-            return Response::json(array('success' => "false", "error" => 'not found'), 200);
+            return Response::json(['success' => "false", "error" => 'not found'], 200);
         }
-        return view('admin.users.modalpin', array('title' => 'Редактирование пин-кода',
+        return view('admin.users.modalpin', ['title' => 'Редактирование пин-кода',
             'user' => $user,
-        ));
+        ]);
     }
     public function editpass()
     {
         $id =request('id');
         $user = User::find($id);
         if ($user == null) {
-            return Response::json(array('success' => "false", "error" => 'not found'), 200);
+            return Response::json(['success' => "false", "error" => 'not found'], 200);
         }
-        return view('admin.users.modalpass', array('title' => 'Редактирование пароля',
+        return view('admin.users.modalpass', ['title' => 'Редактирование пароля',
             'user' => $user,
-        ));
+        ]);
     }
 
     public function add()
     {
-        return view('admin.users.modal', array('title' => 'Добавить пользователя'));
+        return view('admin.users.modal', ['title' => 'Добавить пользователя']);
     }
 
     public function store()
@@ -157,7 +157,7 @@ class UserController extends Controller
         if (request()->has('id') && request('id') != ''){
             $user = User::find(request('id'));
             if ($user == null) {
-                return Response::json(array('success' => "false", "error" => 'not found'), 200);
+                return Response::json(['success' => "false", "error" => 'not found'], 200);
             }
         } else {
             $user = new User();
@@ -173,12 +173,12 @@ class UserController extends Controller
 
         foreach ($validate_arr as $item) {
             if (!request()->has($item) || request($item) == '') {
-                return Response::json(array('success' => "false", 'error' => 'Заполните необходимые поля'), 200);
+                return Response::json(['success' => "false", 'error' => 'Заполните необходимые поля'], 200);
             }
         }
         if (request('group_id') == 1 ) {
             if (!request()->has('email') || request('email') == '') {
-                return Response::json(array('success' => "false", 'error' => 'Заполните необходимые поля'), 200);
+                return Response::json(['success' => "false", 'error' => 'Заполните необходимые поля'], 200);
             }
         }
 
@@ -195,7 +195,7 @@ class UserController extends Controller
                 if  (count($all_users)){
                     foreach ($all_users as $u){
                         if (Hash::check(request('password'), $u->password)) {
-                            return Response::json(array('success' => "false", 'error' => 'Такой пин-код уже используется'), 200);
+                            return Response::json(['success' => "false", 'error' => 'Такой пин-код уже используется'], 200);
                         }
                     }
                 }
@@ -212,11 +212,11 @@ class UserController extends Controller
             }
                 if (request()->has('id')){
                     if (User::where('group_id', '!=',2)->where('id', '!=', request('id'))->where('email',request('email'))->count()>0){
-                        return Response::json(array('success' => "false", 'error' => 'Такой email уже используется'), 200);
+                        return Response::json(['success' => "false", 'error' => 'Такой email уже используется'], 200);
                     }
                 } else {
                     if (User::where('group_id', '!=',2)->where('email',request('email'))->count()>0){
-                        return Response::json(array('success' => "false", 'error' => 'Такой email уже используется'), 200);
+                        return Response::json(['success' => "false", 'error' => 'Такой email уже используется'], 200);
                     }
                 }
                 $user->email = request()->get('email');
@@ -224,14 +224,14 @@ class UserController extends Controller
 
         $user->save();
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
     public function changepin()
     {
             $user = User::find(request('id'));
             if ($user == null) {
-                return Response::json(array('success' => "false", "error" => 'not found'), 200);
+                return Response::json(['success' => "false", "error" => 'not found'], 200);
             }
 
 
@@ -241,7 +241,7 @@ class UserController extends Controller
 
         foreach ($validate_arr as $item) {
             if (!request()->has($item) || request($item) == '') {
-                return Response::json(array('success' => "false", 'error' => 'Заполните необходимые поля'), 200);
+                return Response::json(['success' => "false", 'error' => 'Заполните необходимые поля'], 200);
             }
         }
 
@@ -249,7 +249,7 @@ class UserController extends Controller
             if  (count($all_users)){
                 foreach ($all_users as $u){
                     if (Hash::check(request('password'), $u->password)) {
-                        return Response::json(array('success' => "false", 'error' => 'Такой пин-код уже используется'), 200);
+                        return Response::json(['success' => "false", 'error' => 'Такой пин-код уже используется'], 200);
                     }
                 }
             }
@@ -258,7 +258,7 @@ class UserController extends Controller
             $user->login = request()->get('password');
         $user->save();
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
 
@@ -266,7 +266,7 @@ class UserController extends Controller
     {
             $user = User::find(request('id'));
             if ($user == null) {
-                return Response::json(array('success' => "false", "error" => 'not found'), 200);
+                return Response::json(['success' => "false", "error" => 'not found'], 200);
             }
 
         $validate_arr = [
@@ -275,40 +275,40 @@ class UserController extends Controller
 
         foreach ($validate_arr as $item) {
             if (!request()->has($item) || request($item) == '') {
-                return Response::json(array('success' => "false", 'error' => 'Заполните необходимые поля'), 200);
+                return Response::json(['success' => "false", 'error' => 'Заполните необходимые поля'], 200);
             }
         }
             $user->password = Hash::make(request()->get('password'));
             $user->remember_token = Hash::make($user->password);
         $user->save();
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
     public function delete($id)
     {
         $user = User::find($id);
         if ($user == null) {
-            return Response::json(array('success' => "false", "error" => 'not found'), 200);
+            return Response::json(['success' => "false", "error" => 'not found'], 200);
         }
         $user->delete();
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
     public function shiftclose()
     {
         if (!Auth::user()->isSAdmin()) {
-            return Response::json(array('success' => "false", "error" => 'access only admin group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only admin group'], 200);
         }
         $user_id = request('user_id');
         if  (Usertiming::where('user_id',$user_id)->whereNotIn('type',[1,2,3])->whereNull('finish')->count() > 0){
 //            Если не работа не отдых и есть открытая статистика то работает
-            return Response::json(array('success' => "false", "error" => 'Сотрудник работает'), 200);
+            return Response::json(['success' => "false", "error" => 'Сотрудник работает'], 200);
         }
         if  (Usertiming::where('user_id',$user_id)->whereNotNull('type_order')->whereNull('finish')->count() > 0){
 //            Если не работа не отдых и есть открытая статистика то работает
-            return Response::json(array('success' => "false", "error" => 'Сотрудник работает над заказом'), 200);
+            return Response::json(['success' => "false", "error" => 'Сотрудник работает над заказом'], 200);
         }
         $user_timings = Usertiming::where('user_id', $user_id)->whereNull('finish')->get();
         foreach ($user_timings as  $timing){
@@ -322,6 +322,6 @@ class UserController extends Controller
         $user->status_work = 0;
         $user->save();
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 }

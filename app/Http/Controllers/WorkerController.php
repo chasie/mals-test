@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\URL;
 class WorkerController extends Controller
 {
     private function buildTree(array &$elements, $parentId = 0){
-        $branch = array();
+        $branch = [];
 
         foreach ($elements as $element) {
             if ($element['parent_id'] == $parentId) {
@@ -69,35 +69,35 @@ class WorkerController extends Controller
     public function start()
     {
         if (!Auth::user()->isWorker()) {
-            return Response::json(array('success' => "false", "error" => 'access only worker group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only worker group'], 200);
         }
         $user = Auth::user();
-        return view('start', array('title' => 'Продуктивного дня, ' . $user->name . '!', 'user' => $user));
+        return view('start', ['title' => 'Продуктивного дня, ' . $user->name . '!', 'user' => $user]);
     }
 
     public function break()
     {
         if (!Auth::user()->isWorker()) {
-            return Response::json(array('success' => "false", "error" => 'access only worker group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only worker group'], 200);
         }
         $user = Auth::user();
-        return view('break', array('title' => $user->name, 'user' => $user));
+        return view('break', ['title' => $user->name, 'user' => $user]);
     }
 
     public function action()
     {
         if (!Auth::user()->isWorker()) {
-            return Response::json(array('success' => "false", "error" => 'access only worker group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only worker group'], 200);
         }
         $user = Auth::user();
-        return view('action', array('title' => $user->name,
-            'user' => $user));
+        return view('action', ['title' => $user->name,
+            'user' => $user]);
     }
 
     public function main()
     {
         if (!Auth::user()->isWorker()) {
-            return Response::json(array('success' => "false", "error" => 'access only worker group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only worker group'], 200);
         }
         $user = Auth::user();
         if ($user->status_work != 1) {
@@ -106,7 +106,7 @@ class WorkerController extends Controller
             if ($user->order_id != null || $user->isdelivery != 0 || $user->duty_id != null || $user->ismanagertask != 0) {
                 return redirect()->route('action');
             } else {
-                return view('main', array('title' => 'Продуктивного дня, ' . $user->name . '!', 'user' => $user));
+                return view('main', ['title' => 'Продуктивного дня, ' . $user->name . '!', 'user' => $user]);
             }
         }
     }
@@ -125,7 +125,7 @@ class WorkerController extends Controller
             return Redirect::to(URL::to('/login'));
         }
         $user = Auth::user();
-        return view('orders.index', array('title' => 'Заказы'));
+        return view('orders.index', ['title' => 'Заказы']);
     }
 
     public function getOrdersJson()
@@ -230,11 +230,11 @@ class WorkerController extends Controller
         }
 
 
-        return Response::json(array('data' => $data,
+        return Response::json(['data' => $data,
             "draw" => intval($draw),
             "recordsTotal" => $recordsTotal,
             "recordsFiltered" => $recordsFiltered
-        ), 200);
+        ], 200);
     }
 
     public function postOrderModalInfo()
@@ -246,11 +246,11 @@ class WorkerController extends Controller
         $id = request('order_id');
         $order = Order::find($id);
         if ($order == null) {
-            return Response::json(array('success' => "false", "error" => 'not found'), 200);
+            return Response::json(['success' => "false", "error" => 'not found'], 200);
         }
-        return view('orders.modal_order_info', array('title' => 'Информация про заказ',
+        return view('orders.modal_order_info', ['title' => 'Информация про заказ',
             'order' => $order
-            ));
+            ]);
     }
 
     public function getOrderAdd()
@@ -260,7 +260,7 @@ class WorkerController extends Controller
             return Redirect::to(URL::to('/login'));
         }
         $duties = Duty::orderBy('name')->get();
-        return view('orders.modal', array('title' => 'Добавить заказ', 'duties' => $duties));
+        return view('orders.modal', ['title' => 'Добавить заказ', 'duties' => $duties]);
     }
 
     public function getOrderEdit()
@@ -272,12 +272,12 @@ class WorkerController extends Controller
         $id = request('id');
         $order = Order::find($id);
         if ($order == null) {
-            return Response::json(array('success' => "false", "error" => 'not found'), 200);
+            return Response::json(['success' => "false", "error" => 'not found'], 200);
         }
 
-        return view('orders.modal', array('title' => 'Редактирование заказ',
+        return view('orders.modal', ['title' => 'Редактирование заказ',
             'order' => $order,
-        ));
+        ]);
     }
 
     public function postOrderStore()
@@ -285,7 +285,7 @@ class WorkerController extends Controller
         if (request()->has('id') && request('id') != '') {
             $order = Order::find(request('id'));
             if ($order == null) {
-                return Response::json(array('success' => "false", "error" => 'not found'), 200);
+                return Response::json(['success' => "false", "error" => 'not found'], 200);
             }
         } else {
             $order = new Order();
@@ -300,17 +300,17 @@ class WorkerController extends Controller
 
         foreach ($validate_arr as $item) {
             if (!request()->has($item) || request($item) == '') {
-                return Response::json(array('success' => "false", 'error' => 'Заполните необходимые поля'), 200);
+                return Response::json(['success' => "false", 'error' => 'Заполните необходимые поля'], 200);
             }
         }
 
         if (request()->has('id') && request('id') != '') {
             if (Order::where('number', request('number'))->where('id', '!=', request('id'))->count() > 0) {
-                return Response::json(array('success' => "false", "error" => 'Номер заказ существует. Введите другой номер'), 200);
+                return Response::json(['success' => "false", "error" => 'Номер заказ существует. Введите другой номер'], 200);
             }
         } else {
             if (Order::where('number', request('number'))->count() > 0) {
-                return Response::json(array('success' => "false", "error" => 'Номер заказ существует. Введите другой номер'), 200);
+                return Response::json(['success' => "false", "error" => 'Номер заказ существует. Введите другой номер'], 200);
             }
         }
         $order->number = request('number');
@@ -318,13 +318,13 @@ class WorkerController extends Controller
 
         $order->save();
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
     public function getOrder($id)
     {
         if (!Auth::user()->isWorker()) {
-            return Response::json(array('success' => "false", "error" => 'access only worker group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only worker group'], 200);
         }
         if (Auth::user()->isWorker() && !Auth::user()->isWorking()) {
             Auth::logout();
@@ -332,12 +332,12 @@ class WorkerController extends Controller
         }
         $order = Order::find($id);
         if ($order == null) {
-            return Response::json(array('success' => "false", "error" => 'not found'), 200);
+            return Response::json(['success' => "false", "error" => 'not found'], 200);
         }
 
-        return view('orders.order', array('title' => 'Заказ №' . $order->number,
+        return view('orders.order', ['title' => 'Заказ №' . $order->number,
             'order' => $order,
-        ));
+        ]);
     }
 
     /**
@@ -357,13 +357,13 @@ class WorkerController extends Controller
         $time->diff = 0;
         $time->save();
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
     public function changestatus()
     {
         if (!Auth::user()->isWorker()) {
-            return Response::json(array('success' => "false", "error" => 'access only worker group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only worker group'], 200);
         }
         if (Auth::user()->isWorker() && !Auth::user()->isWorking()) {
             Auth::logout();
@@ -399,13 +399,13 @@ class WorkerController extends Controller
             }
         }
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
     public function changestatusWorkPause()
     {
         if (!Auth::user()->isWorker()) {
-            return Response::json(array('success' => "false", "error" => 'access only worker group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only worker group'], 200);
         }
         if (Auth::user()->isWorker() && !Auth::user()->isWorking()) {
             Auth::logout();
@@ -437,7 +437,7 @@ class WorkerController extends Controller
             }
         }
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
     /**
@@ -459,7 +459,7 @@ class WorkerController extends Controller
             //start
             $boolen = $this->chekIfUserBusy($user);
             if (!$boolen) {
-                return Response::json(array('success' => "false", 'error' => 'У Вас уже есть заказ в работе!'), 200);
+                return Response::json(['success' => "false", 'error' => 'У Вас уже есть заказ в работе!'], 200);
             }
 
 $status_order = new Orderstatus();
@@ -468,14 +468,14 @@ $status_order = new Orderstatus();
             if (request('type') == 0) {
                 //если старт то проверка был ли он собран 2ды
                 if (Orderstatus::where('order_id', request('order_id'))->where('status', 1)->count() >= 1) {
-                    return Response::json(array('success' => "false", 'error' => 'Заказ уже был собран'), 200);
+                    return Response::json(['success' => "false", 'error' => 'Заказ уже был собран'], 200);
                 }
                 //            //если сейчас в сборке
                 if ($status_last != null && $status_last->status == 0) {
-                    return Response::json(array('success' => "false", 'error' => 'Заказ сейчас в сборке'), 200);
+                    return Response::json(['success' => "false", 'error' => 'Заказ сейчас в сборке'], 200);
                 }
                 if ($status_last != null && $status_last->status == 2) {
-                    return Response::json(array('success' => "false", 'error' => 'Заказ сейчас в проверке'), 200);
+                    return Response::json(['success' => "false", 'error' => 'Заказ сейчас в проверке'], 200);
                 }
                 $status_order->status = 0;//сборка
                 $status_order->user_id = $user->id;
@@ -485,12 +485,12 @@ $status_order = new Orderstatus();
             if (request('type') == 1) {
                 //проверка был ли он собран в принципе
                 if (Orderstatus::where('order_id', request('order_id'))->where('status', 1)->count() == 0) {
-                    return Response::json(array('success' => "false", 'error' => 'Заказ еще не собран'), 200);
+                    return Response::json(['success' => "false", 'error' => 'Заказ еще не собран'], 200);
                 }
 
                 //если сейчас в сборке
                 if ($status_last != null && $status_last->status == 0) {
-                    return Response::json(array('success' => "false", 'error' => 'Заказ сейчас в сборке'), 200);
+                    return Response::json(['success' => "false", 'error' => 'Заказ сейчас в сборке'], 200);
                 }
 //                if ($status_last != null && $status_last->status == 2) {
 //                    return Response::json(array('success' => "false", 'error' => 'Заказ сейчас в проверке'), 200);
@@ -510,7 +510,7 @@ $status_order = new Orderstatus();
             if (request('type') == 2) {
                 //если сейчас в сборке
                 if ($status_last == null || $status_last->status != 0) {
-                    return Response::json(array('success' => "false", 'error' => 'Заказ никем не собирается'), 200);
+                    return Response::json(['success' => "false", 'error' => 'Заказ никем не собирается'], 200);
                 }
 //                if ($status_last != null && $status_last->helper_user_id != null) {
 //                    return Response::json(array('success' => "false", 'error' => 'Заказ уже помогают собирать'), 200);
@@ -522,7 +522,7 @@ $status_order = new Orderstatus();
             if (request('type') == 3) {
                 //если сейчас в сборке
                 if ($status_last == null || $status_last->status != 2) {
-                    return Response::json(array('success' => "false", 'error' => 'Заказ никем не проверяется'), 200);
+                    return Response::json(['success' => "false", 'error' => 'Заказ никем не проверяется'], 200);
                 }
 //                if ($status_last != null && $status_last->helper_user_id != null) {
 //                    return Response::json(array('success' => "false", 'error' => 'Заказ уже помогают собирать'), 200);
@@ -604,7 +604,7 @@ $status_order = new Orderstatus();
             $user->save();
         }
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
     /**
@@ -624,7 +624,7 @@ $status_order = new Orderstatus();
             //start
             $boolen = $this->chekIfUserBusy($user);
             if (!$boolen) {
-                return Response::json(array('success' => "false", 'error' => 'У Вас уже есть работа!'), 200);
+                return Response::json(['success' => "false", 'error' => 'У Вас уже есть работа!'], 200);
             }
             $user->isdelivery = request('status');
             $user->save();
@@ -653,7 +653,7 @@ $status_order = new Orderstatus();
             $user->isdelivery = request('status');
             $user->save();
         }
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
 
@@ -674,7 +674,7 @@ $status_order = new Orderstatus();
             //start
             $boolen = $this->chekIfUserBusy($user);
             if (!$boolen) {
-                return Response::json(array('success' => "false", 'error' => 'У Вас уже есть работа!'), 200);
+                return Response::json(['success' => "false", 'error' => 'У Вас уже есть работа!'], 200);
             }
             $user->ismanagertask = request('status');
             $user->save();
@@ -703,7 +703,7 @@ $status_order = new Orderstatus();
             $user->ismanagertask = request('status');
             $user->save();
         }
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
     /**
@@ -713,7 +713,7 @@ $status_order = new Orderstatus();
     public function getDuties()
     {
         if (!Auth::user()->isWorker()) {
-            return Response::json(array('success' => "false", "error" => 'access only worker group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only worker group'], 200);
         }
         if (Auth::user()->isWorker() && !Auth::user()->isWorking()) {
             Auth::logout();
@@ -724,8 +724,8 @@ $status_order = new Orderstatus();
             ->toArray();
         $duties = $this->buildTree($duties);
 
-        return view('duties.index', array('title' => 'Рабочие обязанности',
-            'duties'=>$duties));
+        return view('duties.index', ['title' => 'Рабочие обязанности',
+            'duties'=>$duties]);
     }
 
     /**
@@ -744,7 +744,7 @@ $status_order = new Orderstatus();
         if (request('status') == 1) {
             //start
             if ($user->order_id != null || $user->order_id > 0 || $user->isdelivery == 1 ||$user->duty_id!= null) {
-                return Response::json(array('success' => "false", 'error' => 'У Вас уже есть работа!'), 200);
+                return Response::json(['success' => "false", 'error' => 'У Вас уже есть работа!'], 200);
             }
             $user->duty_id = request('duty_id');
             $user->save();
@@ -774,7 +774,7 @@ $status_order = new Orderstatus();
             $user->duty_id = null;
             $user->save();
         }
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 
     public function init_today_statistic_table()
@@ -823,26 +823,26 @@ $status_order = new Orderstatus();
             }
         }
         $array['break'] = round((int)$array['break'] / 60, 2);
-        return view('orders.init_today_statistic_table', array('array' => $array));
+        return view('orders.init_today_statistic_table', ['array' => $array]);
     }
 
     public function postOrderDelete()
     {
         if (!Auth::user()->isSAdmin()) {
-            return Response::json(array('success' => "false", "error" => 'access only admin group'), 200);
+            return Response::json(['success' => "false", "error" => 'access only admin group'], 200);
         }
         $order = Order::find(request('id'));
         if ($order == null){
-            return Response::json(array('success' => "false", "error" => 'not found'), 200);
+            return Response::json(['success' => "false", "error" => 'not found'], 200);
         }
         if  (User::where('order_id', $order->id)->count()>0){
-            return Response::json(array('success' => "false", "error" => 'Нельзя удалить. Взят в работу'), 200);
+            return Response::json(['success' => "false", "error" => 'Нельзя удалить. Взят в работу'], 200);
         }
         if  (Usertiming::where('order_id', $order->id)->count()>0){
-            return Response::json(array('success' => "false", "error" => 'Нельзя удалить. Взят в работу'), 200);
+            return Response::json(['success' => "false", "error" => 'Нельзя удалить. Взят в работу'], 200);
         }
         $order->delete();
 
-        return Response::json(array('success' => "true"), 200);
+        return Response::json(['success' => "true"], 200);
     }
 }
